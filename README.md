@@ -43,12 +43,12 @@ you want a different attribute, supply the `:as` and `:attribute` options.
 ```ruby
 class User < ActiveRecord::Base
   has_many :guises
-  guises :DeskWorker, :MailFowarder
+  has_guises :DeskWorker, :MailFowarder
 end
 
 class Person < ActiveRecord::Base
-  has_many :guises
-  guises :Admin, :Engineer, :as => :positions, :attribute => :rank
+  has_many :positions
+  has_guises :Admin, :Engineer, :as => :positions, :attribute => :rank
 end
 ```
 
@@ -57,6 +57,7 @@ This adds the following methods to the `User` class:
 * `:has_role?` that checks if a user is a particular type
 * `:desk_worker?`, `:mail_forwarder` that proxy to `:has_role?`
 * `:has_roles?` that checks if a user is of any of the types supplied
+* Aliases the association method (`:positions`) as `:guises` if association is not called `:guises`
 
 Additionally, this creates classes `DeskWorker` and `MailForwarder` that:
 * Inherit from `User`.
@@ -67,4 +68,4 @@ Additionally, this creates classes `DeskWorker` and `MailForwarder` that:
 ## Plans
 
 * Provide generators for roles table
-* Update `guise` method to setup `has_many` association
+* Update `has_guises` method to setup `has_many` association
