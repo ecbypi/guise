@@ -11,7 +11,7 @@ ActiveRecord::Base.establish_connection(
 
 class User < ActiveRecord::Base
   has_many :user_roles
-  has_guises :Technician, :Supervisor, :as => :user_roles, :attribute => :name
+  has_guises :Technician, :Supervisor, :association => :user_roles, :attribute => :name
 end
 
 class UserRole < ActiveRecord::Base

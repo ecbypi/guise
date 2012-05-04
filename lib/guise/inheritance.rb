@@ -6,7 +6,7 @@ module Guise
         introspective_name = "#{name.underscore}?"
 
         # Add a scope for this type of resource
-        scope scope_name, joins(guise_table).where(guise_table => { guise_attribute => name })
+        scope scope_name, joins(guise_association).where(guise_association => { guise_attribute => name })
 
         # build the class setting it's default scope to limit to those of itself
         guise_class = Class.new(self) do

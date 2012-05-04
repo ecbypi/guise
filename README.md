@@ -48,7 +48,7 @@ end
 
 class Person < ActiveRecord::Base
   has_many :positions
-  has_guises :Admin, :Engineer, :as => :positions, :attribute => :rank
+  has_guises :Admin, :Engineer, :association => :positions, :attribute => :rank
 end
 ```
 
