@@ -9,7 +9,7 @@ module Guise
 
       class_eval do
         alias_method :guises, guise_table
-      end
+      end if guise_table != :guises
     end
 
     def guises
