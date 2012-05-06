@@ -19,4 +19,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec", "~> 2.9"
   gem.add_development_dependency "sqlite3", "~> 1.3.3"
   gem.add_development_dependency "factory_girl", "~> 3.2"
+  gem.add_development_dependency "shoulda-matchers", "~> 1.1"
 end
