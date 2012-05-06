@@ -38,7 +38,7 @@ rake db:migrate
 ```
 
 Then add the `guises` call to your model. If your table name is different or
-you want a different attribute, supply the `:as` and `:attribute` options.
+you want a different attribute, supply the `:association` and `:attribute` options.
 
 ```ruby
 class User < ActiveRecord::Base
@@ -69,3 +69,4 @@ Additionally, this creates classes `DeskWorker` and `MailForwarder` that:
 
 * Provide generators for roles table
 * Update `has_guises` method to setup `has_many` association
+* Adding validations on `guise_attribute` column into association class
