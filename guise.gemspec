@@ -4,7 +4,7 @@ require File.expand_path('../lib/guise/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Eduardo Gutierrez"]
   gem.email         = ["edd_d@mit.edu"]
-  gem.description   = %q{ Databse-indempotent roles (mostly) }
+  gem.description   = %q{ Database-indempotent roles (mostly) }
   gem.summary       = %q{ Guise provides a (hopefully) reasonable paradigm for user roles on top of ActiveRecord }
   gem.homepage      = "https://github.com/ecbypi/guise"
 
