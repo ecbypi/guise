@@ -1,21 +1,28 @@
 require 'guise/version'
-require 'guise/attributes'
+require 'guise/options'
 require 'guise/inheritance'
 require 'guise/introspection'
 
 module Guise
-  def self.extended(base)
-    base.extend Inheritance
-    base.extend Attributes
-    base.send :include, Introspection
-  end
 
   def has_guises(*names)
+    add_guise_methods(self)
+
     options = names.last.is_a?(Hash) ? names.pop : {}
     class_names = names.map(&:to_s).map(&:classify)
 
-    set_attributes(class_names, options)
-    build_guises
+    guise_options = set_guise_options(class_names, options)
+
+    build_guises(class_names, guise_options)
+    introspect_guises(class_names)
+  end
+
+  private
+
+  def add_guise_methods(model)
+    model.extend Inheritance
+    model.extend Options
+    model.send :include, Introspection
   end
 end
 

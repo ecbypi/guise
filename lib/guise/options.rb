@@ -1,7 +1,7 @@
 module Guise
-  module Attributes
-    def set_attributes(names, options)
-      @@guise_attributes = options.reverse_merge(
+  module Options
+    def set_guise_options(names, options)
+      @@guise_options = options.reverse_merge(
         :association => :guises,
         :attribute => :title,
         :names => names
@@ -10,18 +10,20 @@ module Guise
       class_eval do
         alias_method :guises, guise_association
       end if guise_association != :guises
+
+      @@guise_options
     end
 
     def guises
-      @@guise_attributes[:names]
+      @@guise_options[:names]
     end
 
     def guise_association
-      @@guise_attributes[:association]
+      @@guise_options[:association]
     end
 
     def guise_attribute
-      @@guise_attributes[:attribute]
+      @@guise_options[:attribute]
     end
   end
 end

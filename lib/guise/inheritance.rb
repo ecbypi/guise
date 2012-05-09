@@ -1,9 +1,8 @@
 module Guise
   module Inheritance
-    def build_guises
-      guises.each do |name|
+    def build_guises(names, options)
+      names.each do |name|
         scope_name = name.tableize.to_sym
-        introspective_name = "#{name.underscore}?"
 
         # Add a scope for this type of resource
         scope scope_name, joins(guise_association).where(guise_association => { guise_attribute => name })
@@ -22,13 +21,6 @@ module Guise
         end
 
         Object.const_set(name, guise_class)
-
-        # define the introspection method for the type
-        class_eval <<-METHOD, __FILE__, __LINE__ + 1
-          def #{introspective_name}
-            has_role?(#{name})
-          end
-        METHOD
       end
     end
   end
