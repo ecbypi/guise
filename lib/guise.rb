@@ -24,7 +24,7 @@ module Guise
 
   def guise_for(name, options = {})
     association = Object.const_get(name.to_s.classify)
-    foreign_key = options[:foreign_key] || "#{association.name}_id"
+    foreign_key = options[:foreign_key] || "#{association.name.underscore}_id"
 
     belongs_to name, options
 
