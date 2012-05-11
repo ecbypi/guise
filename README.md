@@ -55,7 +55,7 @@ This adds the following methods to the `User` class:
 And creates classes `DeskWorker` and `MailForwarder` that:
 * Inherit from `User`.
 * Have default scopes for `:desk_workers` and `:mail_forwarders` respectively.
-* Create users with the right associated occupation.
+* Create users with the right associated type.
 
 
 To configure the other end of the association, add `guise_for`:
@@ -97,5 +97,3 @@ end
 ## The Future
 
 * Provide generators for roles table
-* Update `has_guises` method to setup `has_many` association
-* Adding validations on `guise_attribute` column into association class
