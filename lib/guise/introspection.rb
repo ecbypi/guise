@@ -8,7 +8,7 @@ module Guise
         raise NameError, "no such guise #{name}"
       end
 
-      guises.pluck(guise_attribute).include?(name)
+      guises.map(&guise_attribute).include?(name)
     end
 
     def has_any_roles?(*names)
