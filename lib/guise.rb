@@ -74,4 +74,6 @@ module Guise
   end
 end
 
-ActiveRecord::Base.extend Guise
+if defined?(ActiveRecord)
+  ActiveRecord::Base.extend Guise
+end
