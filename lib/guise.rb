@@ -22,6 +22,20 @@ module Guise
     end
   end
 
+  def guise_for(name, options = {})
+    association = Object.const_get(name.to_s.classify)
+    foreign_key = options[:foreign_key] || "#{association.name}_id"
+
+    belongs_to name, options
+
+    if options[:validate] != false
+      validates association.guise_attribute,
+                :uniqueness => { :scope => foreign_key },
+                :presence => true,
+                :inclusion => { :in => association.guises }
+    end
+  end
+
   private
 
   def build_guises(names, options)

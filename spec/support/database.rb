@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
 end
 
 class UserRole < ActiveRecord::Base
-  belongs_to :user, :foreign_key => :person_id
+  guise_for :user,
+            :foreign_key => :person_id
 end
 
 
