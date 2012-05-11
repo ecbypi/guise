@@ -2,9 +2,9 @@
 
 An alternative to storing role resources in the database.
 
-guise delegates type information to roles table that determines what a resource
-can be instantiated as. In essence, it's similar to single table inheritance,
-but with multiple inheritances possible.
+guise delegates type information to a `has_many` association that stores the
+class names a resource can be instantiated as. In essence, it's similar to
+single table inheritance, but with multiple inheritances possible.
 
 
 ## Installation
@@ -33,16 +33,19 @@ $ gem install guise
 Create a table to store your type information:
 
 ```
-rails generate model guises user:references title:string
+rails generate model user_role user:references title:string
 rake db:migrate
 ```
 
 Then add call the `has_guises` method in your model. This will setup the
-`has_many` association for you.
+`has_many` association for you. It requires the name of the association and
+name of the column that the sublcass name will be stored in.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :DeskWorker, :MailFowarder
+  has_guises :DeskWorker, :MailFowarder,
+             :association => :user_roles,
+             :attribute => :title
 end
 ```
 
@@ -61,7 +64,7 @@ And creates classes `DeskWorker` and `MailForwarder` that:
 To configure the other end of the association, add `guise_for`:
 
 ```ruby
-class Guise < ActiveRecord::Base
+class UserRole < ActiveRecord::Base
   guise_for :user
 end
 ```
@@ -74,8 +77,9 @@ This method does the following:
 
 ### Customization
 
-If the association doesn't fit what is assumed, you can pass in the options for
-`has_many` into `has_guises`. The same applies to `guise_for` with the addition that you can specify not to validate attributes 
+If the association doesn't standard association assumptions, you can pass in
+the options for `has_many` into `has_guises`. The same applies to `guise_for`
+with the addition that you can specify not to validate attributes.
 
 ```ruby
 class Person < ActiveRecord::Base
@@ -92,8 +96,3 @@ class JobTitle < ActiveRecord::Base
             :validate => false # skip setting up validations
 end
 ```
-
-
-## The Future
-
-* Provide generators for roles table
