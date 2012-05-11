@@ -45,14 +45,11 @@ module Guise
   def introspect_guises(names)
     include Introspection
 
-    introspective_names = names.map { |name| "#{name.underscore}?" }
-
-    introspective_names.each do |method_name|
-      class_eval <<-METHOD, __FILE__, __LINE__ + 1
-        def #{method_name}
-          has_role?(#{name})
-        end
-      METHOD
+    names.each do |name|
+      method_name = "#{name.underscore}?"
+      define_method method_name do
+        has_role?(name)
+      end
     end
   end
 end

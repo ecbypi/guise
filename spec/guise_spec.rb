@@ -51,5 +51,8 @@ describe Guise do
   it "adds methods that proxy to #has_role? for ease" do
     user.should respond_to :technician?
     user.should respond_to :supervisor?
+
+    user.technician?.should be_false
+    technician.technician?.should be_true
   end
 end
