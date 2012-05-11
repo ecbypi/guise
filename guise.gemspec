@@ -18,7 +18,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Guise::VERSION
 
-  gem.add_dependency "activerecord", "~> 3.2"
+  gem.add_dependency "activerecord", "~> 3.1"
+  gem.add_dependency "activesupport", "~> 3.1"
   gem.add_development_dependency "rspec", "~> 2.9"
   gem.add_development_dependency "sqlite3", "~> 1.3.3"
   gem.add_development_dependency "factory_girl", "~> 3.2"
