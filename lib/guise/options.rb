@@ -1,17 +1,13 @@
 module Guise
   module Options
-    def set_guise_options(names, options)
-      @@guise_options = options.reverse_merge(
-        :association => :guises,
-        :attribute => :title,
-        :names => names
-      )
+    def extract_guise_options(names, options)
+      @@guise_options = {
+        :association => options.delete(:association) || :guises,
+        :attribute   => options.delete(:attribute)   || :title,
+        :names       => names
+      }
 
-      class_eval do
-        alias_method :guises, guise_association
-      end if guise_association != :guises
-
-      @@guise_options
+      return @@guise_options, options
     end
 
     def guises

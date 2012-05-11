@@ -10,10 +10,16 @@ module Guise
     options = names.last.is_a?(Hash) ? names.pop : {}
     class_names = names.map(&:to_s).map(&:classify)
 
-    guise_options = set_guise_options(class_names, options)
+    guise_options, association_options = extract_guise_options(class_names, options)
 
     build_guises(class_names, guise_options)
     introspect_guises(class_names)
+
+    has_many guise_association, association_options
+
+    if guise_association != :guises
+      alias_method :guises, guise_association
+    end
   end
 
   private

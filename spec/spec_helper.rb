@@ -1,4 +1,7 @@
+require 'active_record'
 require 'factory_girl'
+require 'shoulda-matchers'
+require 'guise'
 
 require File.expand_path('../support/database.rb', __FILE__)
 
