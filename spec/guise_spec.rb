@@ -7,10 +7,8 @@ describe Guise do
   let(:technician) { create(:technician) }
 
   describe ".has_guises" do
-    subject { user }
-
     it "sets up has_many association" do
-      should have_many :user_roles
+      user.should have_many :user_roles
     end
 
     it "builds subclasses of names called in :guise" do
