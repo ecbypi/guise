@@ -16,7 +16,7 @@ module Guise
     def has_guises(*guises)
       options = guises.last.is_a?(Hash) ? guises.pop : {}
 
-      guises      = guises.map { |g| g.to_s.classify }
+      guises      = guises.map { |guise| guise.to_s.classify }
       association = options.fetch(:association)
       attribute   = options.fetch(:attribute)
 
@@ -90,15 +90,15 @@ module Guise
       raise ArgumentError, "no such guise #{value}"
     end
 
-    guises.any? { |g| g[guise_options[:attribute]] == value }
+    guises.any? { |guise| guise[guise_options[:attribute]] == value }
   end
 
   def has_any_guises?(*values)
-    values.any? { |v| has_guise?(v) }
+    values.any? { |value| has_guise?(value) }
   end
 
   def has_guises?(*values)
-    values.all? { |v| has_guise?(v) }
+    values.all? { |value| has_guise?(value) }
   end
 end
 
