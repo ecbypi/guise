@@ -1,5 +1,9 @@
 # guise
 
+[![Build Status](https://travis-ci.org/ecbypi/guise.png?branch=master)](https://travis-ci.org/ecbypi/guise)
+[![Code Climate](https://codeclimate.com/github/ecbypi/guise.png)](https://codeclimate.com/github/ecbypi/guise)
+
+
 An alternative to storing role resources in the database.
 
 `guise` uses a `has_many` association to store type information instead of
