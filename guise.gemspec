@@ -26,4 +26,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "factory_girl", "~> 4.4"
   gem.add_development_dependency "shoulda-matchers", "~> 2.5"
   gem.add_development_dependency "appraisal"
+  gem.add_development_dependency 'pry', '~> 0.9'
 end

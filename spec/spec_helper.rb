@@ -1,3 +1,4 @@
+require 'pry'
 require 'active_record'
 require 'factory_girl'
 require 'shoulda-matchers'
