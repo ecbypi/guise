@@ -2,10 +2,11 @@
 
 An alternative to storing role resources in the database.
 
-guise delegates type information to a `has_many` association that stores the
-class names a resource can be instantiated as. In essence, it's similar to
-single table inheritance, but with multiple inheritances possible.
+`guise` uses a `has_many` association to store type information instead of
+using `has_many :through` or `has_and_belongs_to_many.` The `has_many` association
+stores the role or type information as a string representing the class name.
 
+If effect, `guise` enables 'multi-table-inheritance'.
 
 ## Installation
 
@@ -37,29 +38,22 @@ rails generate model user_role user:references title:string
 rake db:migrate
 ```
 
-Then add call the `has_guises` method in your model. This will setup the
-`has_many` association for you. It requires the name of the association and
-name of the column that the sublcass name will be stored in.
+Then add `has_guises` to your model. This will setup the `has_many` association
+for you. It requires the name of the association and name of the column that
+the sublcass name will be stored in.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :DeskWorker, :MailFowarder,
-             :association => :user_roles,
-             :attribute => :title
+  has_guises :desk_worker, :mail_forwarder, :association => :user_roles, :attribute => :title
 end
 ```
 
 This adds the following methods to the `User` class:
-* `:desk_workers` and `:mail_forwarders` scopes.
-* `:has_role?` that checks if a user is a particular type.
-* `:desk_worker?`, `:mail_forwarder` that proxy to `:has_role?`.
-* `:has_roles?` that checks if a user is of any of the types supplied.
-
-And creates classes `DeskWorker` and `MailForwarder` that:
-* Inherit from `User`.
-* Have default scopes for `:desk_workers` and `:mail_forwarders` respectively.
-* Create users with the right associated type.
-
+* `:desk_workers` and `:mail_forwarders` model scopes.
+* `:has_guise?` that checks if a user is a particular type.
+* `:desk_worker?`, `:mail_forwarder` that proxy to `:has_guise?`.
+* `:has_guises?` that checks if a user has records for all the types supplied.
+* `:has_any_guises?` that checks if a user has records for any of the types supplied.
 
 To configure the other end of the association, add `guise_for`:
 
@@ -74,6 +68,29 @@ This method does the following:
 * Validates the column storing the name of the guise in the list supplied is
   unique to the resource it belongs to and is one of the provided names.
 
+To add a class for each guise, call `:guise_of` in a subclass:
+
+```ruby
+class DeskWorker < User
+  guise_of :user
+end
+```
+
+This adds the following to the `DeskWorker` class:
+
+```ruby
+class DeskWorker < User
+  default_scope -> { joins(:user_roles).where(user_roles: { title: 'DeskWorker'}) }
+
+  after_initialize do
+    self.guises.build(title: 'DeskWorker')
+  end
+
+  after_create do
+    self.guises.create(title: 'DeskWorker')
+  end
+end
+```
 
 ### Customization
 
@@ -83,7 +100,7 @@ with the addition that you can specify not to validate attributes.
 
 ```ruby
 class Person < ActiveRecord::Base
-  has_guises :Admin, :Engineer,
+  has_guises :admin, :engineer,
              :association => :positions,
              :attribute => :rank,
              :foreign_key => :employee_id,

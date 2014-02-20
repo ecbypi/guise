@@ -30,7 +30,7 @@ describe Guise do
         technician.has_role?(:Technician).should be_true
       end
 
-      it "raises an error if type was not added in :guises call" do
+      it "raises an error if type was not specified" do
         expect { user.has_role?(:Accountant) }.to raise_error(NameError)
       end
     end
@@ -70,7 +70,6 @@ describe Guise do
     end
 
     describe "adds validations to ensure guise attribute is" do
-
       it "present" do
         should validate_presence_of(:name)
       end
