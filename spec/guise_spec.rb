@@ -104,6 +104,21 @@ describe Guise do
       should belong_to(:user)
     end
 
+    it 'defines scopes for each guise' do
+      technician_role = create(:technician_role)
+      supervisor_role = create(:supervisor_role)
+
+      technician_roles = UserRole.technicians
+
+      expect(technician_roles).to include technician_role
+      expect(technician_roles).not_to include supervisor_role
+
+      supervisor_roles = UserRole.supervisors
+
+      expect(supervisor_roles).to include supervisor_role
+      expect(supervisor_roles).not_to include technician_role
+    end
+
     describe "adds validations to ensure guise attribute is" do
       it "present" do
         should validate_presence_of(:name)

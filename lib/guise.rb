@@ -67,12 +67,18 @@ module Guise
         raise ArgumentError, "no guises defined on #{klass.name}"
       end
 
+      guises      = klass.guise_options[:names]
+      attribute   = klass.guise_options[:attribute]
       foreign_key = options[:foreign_key] || "#{klass.model_name.singular}_id"
 
       belongs_to name, options.except(:validate)
 
+      guises.each do |guise|
+        scope guise.underscore.pluralize, -> { where(attribute => guise) }
+      end
+
       if options[:validate] != false
-        validates klass.guise_options[:attribute], uniqueness: { scope: foreign_key }, presence: true, inclusion: { in: klass.guise_options[:names] }
+        validates attribute, uniqueness: { scope: foreign_key }, presence: true, inclusion: { in: guises }
       end
     end
   end

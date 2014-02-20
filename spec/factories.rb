@@ -20,5 +20,12 @@ FactoryGirl.define do
   factory :user_role do
     user
     name 'Technician'
+
+    factory :technician_role do
+    end
+
+    factory :supervisor_role do
+      name 'Supervisor'
+    end
   end
 end
