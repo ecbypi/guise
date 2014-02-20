@@ -4,6 +4,8 @@ require 'factory_girl'
 require 'shoulda-matchers'
 require 'guise'
 
+I18n.enforce_available_locales = false
+
 ActiveRecord::Base.establish_connection(
   :adapter => 'sqlite3',
   :database => ':memory:'
