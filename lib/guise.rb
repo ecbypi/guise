@@ -9,7 +9,7 @@ module Guise
   extend ActiveSupport::Concern
 
   included do
-    class_attribute :guise_options
+    class_attribute :guise_options, :instance_writer => false
   end
 
   module ClassMethods
@@ -93,12 +93,6 @@ module Guise
 
   def has_guises?(*values)
     values.all? { |v| has_guise?(v) }
-  end
-
-  private
-
-  def guise_options
-    self.class.guise_options
   end
 end
 
