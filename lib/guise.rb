@@ -1,5 +1,6 @@
 require 'active_support/concern'
 require 'active_support/core_ext/hash/keys'
+require 'active_support/core_ext/string/inflections'
 
 require 'guise/version'
 require 'guise/lifecycle_callback'
@@ -47,7 +48,7 @@ module Guise
     end
 
     def guise_of(name)
-      klass = Object.const_get(name.to_s.classify)
+      klass = name.to_s.classify.constantize
 
       if klass.guise_options.nil?
         raise ArgumentError, "no guises defined on #{klass.name}"
@@ -60,7 +61,7 @@ module Guise
     end
 
     def guise_for(name, options = {})
-      klass = Object.const_get(name.to_s.classify)
+      klass = name.to_s.classify.constantize
 
       if klass.guise_options.nil?
         raise ArgumentError, "no guises defined on #{klass.name}"
