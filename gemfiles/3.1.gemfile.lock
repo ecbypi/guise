@@ -55,6 +55,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (~> 3.1)
+  activesupport (~> 3.1)
   appraisal
   factory_girl (~> 4.4)
   guise!
