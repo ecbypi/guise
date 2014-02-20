@@ -22,7 +22,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "activesupport", ">= 3.1", "< 4.1"
   gem.add_development_dependency 'rake', '~> 10.1'
   gem.add_development_dependency "rspec", "~> 2.14"
-  gem.add_development_dependency "sqlite3", "~> 1.3"
   gem.add_development_dependency "factory_girl", "~> 4.4"
   gem.add_development_dependency "shoulda-matchers", "~> 2.5"
   gem.add_development_dependency "appraisal"
@@ -32,6 +31,6 @@ Gem::Specification.new do |gem|
     gem.add_development_dependency 'activerecord-jdbcsqlite3-adapter'
     gem.add_development_dependency 'jdbc-sqlite3'
   else
-    gem.add_development_dependency 'sqlite3',  '~> 1.3.6'
+    gem.add_development_dependency 'sqlite3', '~> 1.3'
   end
 end
