@@ -1,6 +1,7 @@
 require 'active_support/concern'
 require 'active_support/core_ext/hash/keys'
 
+require 'guise/version'
 require 'guise/lifecycle_callback'
 
 module Guise
