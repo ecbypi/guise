@@ -1,79 +1,105 @@
-require 'guise/version'
-require 'guise/options'
-require 'guise/introspection'
+require 'active_support/concern'
+require 'active_support/core_ext/hash/keys'
+
+require 'guise/lifecycle_callback'
 
 module Guise
+  extend ActiveSupport::Concern
 
-  def has_guises(*names)
-    extend Options
+  included do
+    class_attribute :guise_options
+  end
 
-    options = names.last.is_a?(Hash) ? names.pop : {}
-    class_names = names.map(&:to_s).map(&:classify)
+  module ClassMethods
+    def has_guises(*guises)
+      options = guises.last.is_a?(Hash) ? guises.pop : {}
 
-    guise_options, association_options = extract_guise_options(class_names, options)
+      guises      = guises.map { |g| g.to_s.classify }
+      association = options.fetch(:association)
+      attribute   = options.fetch(:attribute)
 
-    build_guises(class_names, guise_options)
-    introspect_guises(class_names)
+      self.guise_options = {
+        :names       => guises,
+        :association => association,
+        :attribute   => attribute
+      }
 
-    has_many guise_association, association_options
+      guises.each do |guise|
+        method_name = guise.underscore
+        scope method_name.pluralize, -> { joins(association).where(association => { attribute => guise }) }
 
-    if guise_association != :guises
-      alias_method :guises, guise_association
+        define_method "#{method_name}?" do
+          has_guise?(guise)
+        end
+      end
+
+      has_many association, options.except(:association, :attribute)
+
+      if association != :guises
+        association_singular = association.to_s.singularize
+
+        alias_method :guises, association
+        alias_method "has_#{association_singular}?", :has_guise?
+        alias_method "has_#{association}?", :has_guises?
+        alias_method "has_any_#{association}?", :has_any_guises?
+      end
+    end
+
+    def guise_of(name)
+      klass = Object.const_get(name.to_s.classify)
+
+      if klass.guise_options.nil?
+        raise ArgumentError, "no guises defined on #{klass.name}"
+      end
+
+      default_scope -> { send(model_name.plural) }
+
+      after_initialize LifecycleCallback.new(model_name.to_s)
+      after_create LifecycleCallback.new(model_name.to_s)
+    end
+
+    def guise_for(name, options = {})
+      klass = Object.const_get(name.to_s.classify)
+
+      if klass.guise_options.nil?
+        raise ArgumentError, "no guises defined on #{klass.name}"
+      end
+
+      foreign_key = options[:foreign_key] || "#{klass.model_name.singular}_id"
+
+      belongs_to name, options.except(:validate)
+
+      if options[:validate] != false
+        validates klass.guise_options[:attribute], :uniqueness => { :scope => foreign_key }, :presence => true, :inclusion => { :in => klass.guise_options[:names] }
+      end
     end
   end
 
-  def guise_for(name, options = {})
-    association = Object.const_get(name.to_s.classify)
-    foreign_key = options[:foreign_key] || "#{association.name.underscore}_id"
+  def has_guise?(value)
+    value = value.to_s.classify
 
-    belongs_to name, options
-
-    if options[:validate] != false
-      validates association.guise_attribute,
-                :uniqueness => { :scope => foreign_key },
-                :presence => true,
-                :inclusion => { :in => association.guises }
+    unless guise_options[:names].any? { |name| name == value }
+      raise ArgumentError, "no such guise #{value}"
     end
+
+    guises.any? { |g| g[guise_options[:attribute]] == value }
+  end
+
+  def has_any_guises?(*values)
+    values.any? { |v| has_guise?(v) }
+  end
+
+  def has_guises?(*values)
+    values.all? { |v| has_guise?(v) }
   end
 
   private
 
-  def build_guises(names, options)
-    names.each do |name|
-      scope_name = name.tableize.to_sym
-
-      # Add a scope for this type of resource
-      scope scope_name, joins(guise_association).where(guise_association => { guise_attribute => name })
-
-      # build the class setting it's default scope to limit to those of itself
-      guise_class = Class.new(self) do
-        default_scope { send(scope_name) }
-
-        after_initialize do
-          self.guises.new(self.guise_attribute => name) unless self.has_role?(name)
-        end
-
-        after_create do
-          self.guises.create(self.guise_attribute => name)
-        end
-      end
-
-      Object.const_set(name, guise_class)
-    end
-  end
-
-  def introspect_guises(names)
-    include Introspection
-
-    names.each do |name|
-      method_name = "#{name.underscore}?"
-      define_method method_name do
-        has_role?(name)
-      end
-    end
+  def guise_options
+    self.class.guise_options
   end
 end
 
 if defined?(ActiveRecord)
-  ActiveRecord::Base.extend Guise
+  ActiveRecord::Base.send(:include, Guise)
 end

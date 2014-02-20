@@ -1,69 +1,104 @@
 require 'spec_helper'
 
 describe Guise do
+  let!(:user) { create(:user) }
+  let!(:supervisor) { create(:supervisor) }
+  let!(:technician) { create(:technician) }
 
-  let(:user) { create(:user) }
-  let(:supervisor) { create(:supervisor) }
-  let(:technician) { create(:technician) }
+  after do
+    User.delete_all
+  end
 
   describe ".has_guises" do
     it "sets up has_many association" do
       user.should have_many :user_roles
     end
 
-    it "builds subclasses of names called in :guise" do
-      Technician.new.should be_a User
-      Technician.new.guises.should_not be_empty
-    end
-
     it "adds scopes for each type" do
-      User.technicians.should include(technician)
-      User.technicians.should_not include(user)
+      technicians = User.technicians
 
-      User.supervisors.should include(supervisor)
-      User.supervisors.should_not include(user)
+      technicians.should include technician
+      technicians.should_not include user
+      technicians.should_not include supervisor
+    end
+  end
+
+  describe "#has_guise?" do
+    it "checks if record is of the specified type" do
+      user.should_not have_guise :technician
+
+      technician.should have_guise :technician
+      technician.should have_guise :Technician
+      technician.should have_guise 'Technician'
+      technician.should have_guise 'technician'
+      technician.should have_guise Technician
     end
 
-    describe "#has_role?" do
-      it "checks if resource is of the type provided" do
-        user.has_role?(:technician).should be_false
-        technician.has_role?(:Technician).should be_true
-      end
-
-      it "raises an error if type was not specified" do
-        expect { user.has_role?(:Accountant) }.to raise_error(NameError)
-      end
+    it "raises an error if type was not specified" do
+      expect { user.has_guise?(:Accountant) }.to raise_error ArgumentError
     end
 
-    describe "#has_roles?" do
-      before :each do
-        create(:user_role, :name => 'Technician', :user => supervisor)
-      end
-
-      it "checks if resource is all of the provided types" do
-        technician.has_roles?(:Supervisor, :Technician).should be_false
-        supervisor.has_roles?('Supervisor', Technician).should be_true
-      end
+    it 'is aliased based on the name of the association' do
+      user.should_not have_user_role :technician
+      technician.should have_user_role :technician
     end
 
-    describe "#has_any_roles?" do
-      it "checks if resource is any of the supplied roles" do
-        user.has_any_roles?(:Supervisor, :Technician).should be_false
-        technician.has_any_roles?('supervisor', 'technician').should be_true
-      end
+    it 'is wrapped for each guise specified' do
+      user.should_not be_technician
+      technician.should be_technician
+    end
+  end
+
+  describe "#has_guises?" do
+    before do
+      @role = create(:user_role, :name => 'Technician', :user => supervisor)
     end
 
-    it "adds methods that proxy to #has_role? for ease" do
-      user.should respond_to :technician?
-      user.should respond_to :supervisor?
+    after do
+      @role.destroy
+    end
 
-      user.technician?.should be_false
-      technician.technician?.should be_true
+    it "checks if resource is all of the provided types" do
+      technician.should_not have_guises :Supervisor, :Technician
+      supervisor.should have_guises :Supervisor, :Technician
+    end
+
+    it 'is aliased based on the association name' do
+      technician.should_not have_user_roles :Supervisor, :Technician
+      supervisor.should have_user_roles :Supervisor, :Technician
+    end
+  end
+
+  describe "#has_any_roles?" do
+    it "checks if resource is any of the supplied roles" do
+      user.should_not have_any_guises :Supervisor, :Technician
+      technician.should have_any_guises 'supervisor', 'technician'
+    end
+
+    it 'is aliased based on the association name' do
+      user.should_not have_any_user_roles :Supervisor, :Technician
+      technician.should have_any_user_roles 'supervisor', 'Technician'
+    end
+  end
+
+  describe '.guise_of' do
+    it "sets default scope to limit to records of the class's type" do
+      technician_ids = Technician.pluck(:id)
+
+      technician_ids.should eq [technician.id]
+    end
+
+    it 'sets up lifecycle callbacks to ensure records are initialized and created with the correct associated records' do
+      new_record = Technician.new
+      new_record.should have_guise :technician
+
+      created_record = Technician.create!
+      created_record.should have_guise :technician
     end
   end
 
   describe ".guise_for" do
-    subject { create(:user_role) }
+    subject { UserRole.new }
 
     it "sets up belongs_to" do
       should belong_to(:user)

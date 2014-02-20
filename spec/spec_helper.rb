@@ -30,6 +30,14 @@ class User < ActiveRecord::Base
              :foreign_key => :person_id
 end
 
+class Technician < User
+  guise_of :user
+end
+
+class Supervisor < User
+  guise_of :User
+end
+
 class UserRole < ActiveRecord::Base
   guise_for :user,
             :foreign_key => :person_id
