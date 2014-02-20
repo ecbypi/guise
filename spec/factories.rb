@@ -6,13 +6,13 @@ FactoryGirl.define do
 
     factory :technician do
       after(:create) do |user, proxy|
-        create(:user_role, :name => 'Technician', :user => user)
+        create(:user_role, name: 'Technician', user: user)
       end
     end
 
     factory :supervisor do
       after(:create) do |user, proxy|
-        create(:user_role, :name => 'Supervisor', :user => user)
+        create(:user_role, name: 'Supervisor', user: user)
       end
     end
   end

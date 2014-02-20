@@ -7,19 +7,19 @@ require 'guise'
 I18n.enforce_available_locales = false
 
 ActiveRecord::Base.establish_connection(
-  :adapter => 'sqlite3',
-  :database => ':memory:'
+  adapter: 'sqlite3',
+  database: ':memory:'
 )
 
 ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Schema.define do
-  create_table :users, :force => true do |t|
+  create_table :users, force: true do |t|
     t.string :name
     t.string :email
   end
 
-  create_table :user_roles, :force => true do |t|
+  create_table :user_roles, force: true do |t|
     t.string :name
     t.integer :person_id
   end
@@ -27,9 +27,9 @@ end
 
 class User < ActiveRecord::Base
   has_guises :Technician, :Supervisor,
-             :association => :user_roles,
-             :attribute => :name,
-             :foreign_key => :person_id
+             association: :user_roles,
+             attribute: :name,
+             foreign_key: :person_id
 end
 
 class Technician < User
@@ -42,7 +42,7 @@ end
 
 class UserRole < ActiveRecord::Base
   guise_for :user,
-            :foreign_key => :person_id
+            foreign_key: :person_id
 end
 
 

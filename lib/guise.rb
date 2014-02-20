@@ -9,7 +9,7 @@ module Guise
   extend ActiveSupport::Concern
 
   included do
-    class_attribute :guise_options, :instance_writer => false
+    class_attribute :guise_options, instance_writer: false
   end
 
   module ClassMethods
@@ -21,9 +21,9 @@ module Guise
       attribute   = options.fetch(:attribute)
 
       self.guise_options = {
-        :names       => guises,
-        :association => association,
-        :attribute   => attribute
+        names: guises,
+        association: association,
+        attribute: attribute
       }
 
       guises.each do |guise|
@@ -72,7 +72,7 @@ module Guise
       belongs_to name, options.except(:validate)
 
       if options[:validate] != false
-        validates klass.guise_options[:attribute], :uniqueness => { :scope => foreign_key }, :presence => true, :inclusion => { :in => klass.guise_options[:names] }
+        validates klass.guise_options[:attribute], uniqueness: { scope: foreign_key }, presence: true, inclusion: { in: klass.guise_options[:names] }
       end
     end
   end

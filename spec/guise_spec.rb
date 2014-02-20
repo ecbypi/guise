@@ -51,7 +51,7 @@ describe Guise do
 
   describe "#has_guises?" do
     before do
-      @role = create(:user_role, :name => 'Technician', :user => supervisor)
+      @role = create(:user_role, name: 'Technician', user: supervisor)
     end
 
     after do
@@ -114,7 +114,7 @@ describe Guise do
       end
 
       it "is one of the guise names provided" do
-        expect { create(:user_role, :name => 'Farmer') }.to raise_error ActiveRecord::RecordInvalid
+        expect { create(:user_role, name: 'Farmer') }.to raise_error ActiveRecord::RecordInvalid
       end
     end
   end
