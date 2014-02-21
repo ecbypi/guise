@@ -1,23 +1,16 @@
 module Guise
   class LifecycleCallback
-    def initialize(guise)
+    def initialize(guise, attribute)
       @guise = guise
+      @attribute = attribute
     end
 
     def after_initialize(record)
-      attribute = guise_attribute_for(record)
-      record.guises.build(attribute => @guise)
+      record.guises.build(@attribute => @guise)
     end
 
     def after_create(record)
-      attribute = guise_attribute_for(record)
-      record.guises.create(attribute => @guise)
-    end
-
-    private
-
-    def guise_attribute_for(record)
-      record.guise_options[:attribute]
+      record.guises.create(@attribute => @guise)
     end
   end
 end
