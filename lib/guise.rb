@@ -16,7 +16,7 @@ module Guise
     def has_guises(*guises)
       options = guises.last.is_a?(Hash) ? guises.pop : {}
 
-      guises      = guises.map { |guise| guise.to_s.classify }
+      guises      = guises.map(&:to_s)
       association = options.fetch(:association)
       attribute   = options.fetch(:attribute)
 
@@ -48,7 +48,7 @@ module Guise
     end
 
     def guise_of(name)
-      klass = name.to_s.classify.constantize
+      klass = Object.const_get(name)
 
       if klass.guise_options.nil?
         raise ArgumentError, "no guises defined on #{klass.name}"
@@ -61,17 +61,18 @@ module Guise
     end
 
     def guise_for(name, options = {})
-      klass = name.to_s.classify.constantize
+      klass = Object.const_get(name)
 
       if klass.guise_options.nil?
         raise ArgumentError, "no guises defined on #{klass.name}"
       end
 
+      association = name.to_s.underscore.to_sym
       guises      = klass.guise_options[:names]
       attribute   = klass.guise_options[:attribute]
       foreign_key = options[:foreign_key] || "#{klass.model_name.singular}_id"
 
-      belongs_to name, options.except(:validate)
+      belongs_to association, options.except(:validate)
 
       guises.each do |guise|
         scope guise.underscore.pluralize, -> { where(attribute => guise) }

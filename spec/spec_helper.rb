@@ -26,14 +26,11 @@ ActiveRecord::Schema.define do
 end
 
 class User < ActiveRecord::Base
-  has_guises :Technician, :Supervisor,
-             association: :user_roles,
-             attribute: :name,
-             foreign_key: :person_id
+  has_guises :Technician, :Supervisor, association: :user_roles, attribute: :name, foreign_key: :person_id
 end
 
 class Technician < User
-  guise_of :user
+  guise_of :User
 end
 
 class Supervisor < User
@@ -41,7 +38,7 @@ class Supervisor < User
 end
 
 class UserRole < ActiveRecord::Base
-  guise_for :user,
+  guise_for :User,
             foreign_key: :person_id
 end
 

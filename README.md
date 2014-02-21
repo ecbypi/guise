@@ -48,7 +48,7 @@ the sublcass name will be stored in.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :desk_worker, :mail_forwarder, :association => :user_roles, :attribute => :title
+  has_guises :DeskWorker, :MailForwarder, :association => :user_roles, :attribute => :title
 end
 ```
 
@@ -63,7 +63,7 @@ To configure the other end of the association, add `guise_for`:
 
 ```ruby
 class UserRole < ActiveRecord::Base
-  guise_for :user
+  guise_for :User
 end
 ```
 
@@ -76,7 +76,7 @@ To add a class for each guise, call `:guise_of` in a subclass:
 
 ```ruby
 class DeskWorker < User
-  guise_of :user
+  guise_of :User
 end
 ```
 
