@@ -104,7 +104,7 @@ with the addition that you can specify not to validate attributes.
 
 ```ruby
 class Person < ActiveRecord::Base
-  has_guises :admin, :engineer,
+  has_guises :Admin, :Engineer,
              :association => :positions,
              :attribute => :rank,
              :foreign_key => :employee_id,
@@ -112,7 +112,7 @@ class Person < ActiveRecord::Base
 end
 
 class JobTitle < ActiveRecord::Base
-  guise_for :person,
+  guise_for :Person,
             :foreign_key => :employee_id,
             :validate => false # skip setting up validations
 end
