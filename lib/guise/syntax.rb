@@ -41,11 +41,11 @@ module Guise
       end
     end
 
-    def guise_of(name)
-      options = Guise.registry[name]
+    def guise_of(class_name)
+      options = Guise.registry[class_name]
 
       if options.nil?
-        raise ArgumentError, "no guises defined on #{name}"
+        raise ArgumentError, "no guises defined on #{class_name}"
       end
 
       default_scope -> { send(model_name.plural) }
@@ -56,17 +56,17 @@ module Guise
       after_create callback
     end
 
-    def guise_for(name, options = {})
-      guise_options = Guise.registry[name]
+    def guise_for(class_name, options = {})
+      guise_options = Guise.registry[class_name]
 
       if guise_options.nil?
-        raise ArgumentError, "no guises defined on #{name}"
+        raise ArgumentError, "no guises defined on #{class_name}"
       end
 
-      association = name.to_s.underscore.to_sym
+      association = class_name.to_s.underscore.to_sym
       guises      = guise_options[:names]
       attribute   = guise_options[:attribute]
-      foreign_key = options[:foreign_key] || "#{name.underscore}_id"
+      foreign_key = options[:foreign_key] || "#{class_name.underscore}_id"
 
       belongs_to association, options.except(:validate)
 
@@ -79,11 +79,11 @@ module Guise
       end
     end
 
-    def scoped_guise_for(name)
-      guise_options = Guise.registry[name]
+    def scoped_guise_for(class_name)
+      guise_options = Guise.registry[class_name]
 
       if guise_options.nil?
-        raise ArgumentError, "no guises defined on #{name}"
+        raise ArgumentError, "no guises defined on #{class_name}"
       end
 
       attribute = guise_options[:attribute]
