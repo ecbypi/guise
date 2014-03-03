@@ -18,6 +18,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Guise::VERSION
 
+  gem.required_ruby_version = '>= 1.9.3'
+
   gem.add_dependency "activerecord", ">= 3.1", "< 4.1"
   gem.add_dependency "activesupport", ">= 3.1", "< 4.1"
   gem.add_development_dependency 'rake', '~> 10.1'
