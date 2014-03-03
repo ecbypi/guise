@@ -96,6 +96,32 @@ class DeskWorker < User
 end
 ```
 
+To scope the association class to a guise, use `scoped_guise_for`. The name of
+the class must be the guise it represents combined with the name of the parent
+class.
+
+```ruby
+class DeskWorkerUserRole < UserRole
+  scoped_guise_for :User
+end
+```
+
+This sets up the class as follows:
+
+```ruby
+class DeskWorkerUserRole < UserRole
+  default_scope -> { where(title: 'DeskWorker') }
+
+  after_initialize do
+    self.title = 'DeskWorker'
+  end
+
+  before_create do
+    self.title = 'DeskWorker'
+  end
+end
+```
+
 ### Customization
 
 If the association doesn't standard association assumptions, you can pass in

@@ -1,7 +1,7 @@
 require 'active_support/core_ext/module/attribute_accessors'
 
 require 'guise/version'
-require 'guise/lifecycle_callback'
+require 'guise/callbacks'
 require 'guise/syntax'
 require 'guise/introspection'
 

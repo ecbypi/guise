@@ -7,6 +7,7 @@ describe Guise do
 
   after do
     User.delete_all
+    UserRole.delete_all
   end
 
   describe ".has_guises" do
@@ -131,6 +132,22 @@ describe Guise do
       it "is one of the guise names provided" do
         expect { create(:user_role, name: 'Farmer') }.to raise_error ActiveRecord::RecordInvalid
       end
+    end
+  end
+
+  describe '.scoped_guise_of' do
+    it 'sets default scope' do
+      names = TechnicianUserRole.pluck(:name).uniq
+
+      expect(names).to eq ['Technician']
+    end
+
+    it 'sets up lifecycle callbacks to ensure the object is in the correct state' do
+      new_technician_role = TechnicianUserRole.new
+      created_technician_role = TechnicianUserRole.create!
+
+      expect(new_technician_role.name).to eq 'Technician'
+      expect(created_technician_role.name).to eq 'Technician'
     end
   end
 end

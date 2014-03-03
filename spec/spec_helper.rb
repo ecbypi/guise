@@ -42,6 +42,10 @@ class UserRole < ActiveRecord::Base
             foreign_key: :person_id
 end
 
+class TechnicianUserRole < UserRole
+  scoped_guise_for :User
+end
+
 
 FactoryGirl.find_definitions
 RSpec.configure do |config|

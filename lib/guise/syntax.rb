@@ -50,7 +50,7 @@ module Guise
 
       default_scope -> { send(model_name.plural) }
 
-      callback = LifecycleCallback.new(self.name, options[:attribute])
+      callback = SourceCallback.new(self.name, options[:attribute])
 
       after_initialize callback
       after_create callback
@@ -77,6 +77,28 @@ module Guise
       if options[:validate] != false
         validates attribute, uniqueness: { scope: foreign_key }, presence: true, inclusion: { in: guises }
       end
+    end
+
+    def scoped_guise_for(name)
+      guise_options = Guise.registry[name]
+
+      if guise_options.nil?
+        raise ArgumentError, "no guises defined on #{name}"
+      end
+
+      attribute = guise_options[:attribute]
+      parent_name = table_name.classify
+
+      value = guise_options[:names].detect do |guise|
+        guise == model_name.to_s.chomp(parent_name)
+      end
+
+      default_scope -> { where(attribute => value) }
+
+      callback = AssociationCallback.new(value, attribute)
+
+      after_initialize callback
+      before_create callback
     end
   end
 end
