@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.name          = "guise"
   gem.require_paths = ["lib"]
   gem.version       = Guise::VERSION
+  gem.license       = 'MIT'
 
   gem.required_ruby_version = '>= 1.9.3'
 
@@ -26,7 +27,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec", "~> 2.14"
   gem.add_development_dependency "factory_girl", "~> 4.4"
   gem.add_development_dependency "shoulda-matchers", "~> 2.5"
-  gem.add_development_dependency "appraisal"
+  gem.add_development_dependency "appraisal", '~> 0.5'
   gem.add_development_dependency 'pry', '~> 0.9'
 
   if RUBY_PLATFORM == 'java'
