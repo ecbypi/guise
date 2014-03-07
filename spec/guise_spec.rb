@@ -22,6 +22,14 @@ describe Guise do
       expect(technicians).not_to include user
       expect(technicians).not_to include supervisor
     end
+
+    it 'handles non-standard table names and foreign key attributes' do
+      person = create(:person)
+      create(:permission, person: person)
+
+      expect(person).to have_many :permissions
+      expect(Person.admins).to include person
+    end
   end
 
   describe "#has_guise?" do
@@ -126,7 +134,7 @@ describe Guise do
       end
 
       it "unique per resource" do
-        should validate_uniqueness_of(:name).scoped_to(:person_id)
+        should validate_uniqueness_of(:name).scoped_to(:user_id)
       end
 
       it "is one of the guise names provided" do

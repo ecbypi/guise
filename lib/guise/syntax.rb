@@ -13,6 +13,7 @@ module Guise
       guises      = guises.map(&:to_s)
       association = options.fetch(:association)
       attribute   = options.fetch(:attribute)
+      table_name  = options[:table_name] || association
 
       Guise.registry[self.name] = {
         names: guises,
@@ -22,14 +23,14 @@ module Guise
 
       guises.each do |guise|
         method_name = guise.underscore
-        scope method_name.pluralize, -> { joins(association).where(association => { attribute => guise }) }
+        scope method_name.pluralize, -> { joins(association).where(table_name => { attribute => guise }) }
 
         define_method "#{method_name}?" do
           has_guise?(guise)
         end
       end
 
-      has_many association, options.except(:association, :attribute)
+      has_many association, options.except(:association, :attribute, :table_name)
 
       if association != :guises
         association_singular = association.to_s.singularize
@@ -66,7 +67,7 @@ module Guise
       association = class_name.to_s.underscore.to_sym
       guises      = guise_options[:names]
       attribute   = guise_options[:attribute]
-      foreign_key = options[:foreign_key] || "#{class_name.underscore}_id"
+      foreign_key = options[:foreign_key] || "#{class_name.to_s.underscore}_id"
 
       belongs_to association, options.except(:validate)
 

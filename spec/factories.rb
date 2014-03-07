@@ -17,6 +17,14 @@ FactoryGirl.define do
     end
   end
 
+  factory :person do
+  end
+
+  factory :permission do
+    person
+    privilege 'Admin'
+  end
+
   factory :user_role do
     user
     name 'Technician'

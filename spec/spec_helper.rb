@@ -21,12 +21,20 @@ ActiveRecord::Schema.define do
 
   create_table :user_roles, force: true do |t|
     t.string :name
-    t.integer :person_id
+    t.integer :user_id
+  end
+
+  create_table :people, force: true do |t|
+  end
+
+  create_table :privileges, force: true do |t|
+    t.integer :employee_id
+    t.string :privilege
   end
 end
 
 class User < ActiveRecord::Base
-  has_guises :Technician, :Supervisor, association: :user_roles, attribute: :name, foreign_key: :person_id
+  has_guises :Technician, :Supervisor, association: :user_roles, attribute: :name
 end
 
 class Technician < User
@@ -38,14 +46,22 @@ class Supervisor < User
 end
 
 class UserRole < ActiveRecord::Base
-  guise_for :User,
-            foreign_key: :person_id
+  guise_for :User
 end
 
 class TechnicianUserRole < UserRole
   scoped_guise_for :User
 end
 
+class Person < ActiveRecord::Base
+  has_guises :Admin, :Manager, :Reviewer, association: :permissions, attribute: :privilege, foreign_key: :employee_id, table_name: :privileges
+end
+
+class Permission < ActiveRecord::Base
+  self.table_name = :privileges
+
+  guise_for :Person, foreign_key: :employee_id
+end
 
 FactoryGirl.find_definitions
 RSpec.configure do |config|
