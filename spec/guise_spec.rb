@@ -47,6 +47,16 @@ describe Guise do
       expect { user.has_guise?(:Accountant) }.to raise_error ArgumentError
     end
 
+    it 'ignores records marked for destruction' do
+      technician_role = build(:user_role, name: 'Technician')
+      technician_user = create(:user, user_roles: [technician_role])
+
+      expect(technician_user).to have_guise :technician
+
+      technician_role.mark_for_destruction
+      expect(technician_user).not_to have_guise :technician
+    end
+
     it 'is aliased based on the name of the association' do
       expect(user).not_to have_user_role :technician
       expect(technician).to have_user_role :technician
@@ -72,6 +82,20 @@ describe Guise do
       expect(supervisor).to have_guises :Supervisor, :Technician
     end
 
+    it 'ignores records marked for destruction' do
+      technician_role = build(:user_role, name: 'Technician')
+      supervisor_role = build(:user_role, name: 'Supervisor')
+      user = create(:user, user_roles: [technician_role, supervisor_role])
+
+      expect(user).to have_guises :technician, :supervisor
+
+      technician_role.mark_for_destruction
+
+      expect(user).not_to have_guises :technician, :supervisor
+      expect(user).not_to have_guises :technician
+      expect(user).to have_guises :supervisor
+    end
+
     it 'is aliased based on the association name' do
       expect(technician).not_to have_user_roles :Supervisor, :Technician
       expect(supervisor).to have_user_roles :Supervisor, :Technician
@@ -82,6 +106,16 @@ describe Guise do
     it "checks if resource is any of the supplied roles" do
       expect(user).not_to have_any_guises :Supervisor, :Technician
       expect(technician).to have_any_guises 'supervisor', 'technician'
+    end
+
+    it 'ignores records marked for destruction' do
+      technician_role = build(:user_role, name: 'Technician')
+      technician_user = create(:user, user_roles: [technician_role])
+
+      expect(technician_user).to have_any_guises :technician, :supervisor
+
+      technician_role.mark_for_destruction
+      expect(technician_user).not_to have_any_guises :technician, :supervisor
     end
 
     it 'is aliased based on the association name' do
