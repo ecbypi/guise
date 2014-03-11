@@ -78,7 +78,7 @@ describe Guise do
     end
   end
 
-  describe "#has_any_roles?" do
+  describe "#has_any_guises?" do
     it "checks if resource is any of the supplied roles" do
       expect(user).not_to have_any_guises :Supervisor, :Technician
       expect(technician).to have_any_guises 'supervisor', 'technician'
