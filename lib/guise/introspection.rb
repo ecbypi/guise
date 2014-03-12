@@ -11,7 +11,7 @@ module Guise
         raise ArgumentError, "no such guise #{value}"
       end
 
-      guises.any? { |guise| guise[guise_options[:attribute]] == value }
+      guises.any? { |guise| !guise.marked_for_destruction? && guise[guise_options[:attribute]] == value }
     end
 
     def has_any_guises?(*values)
