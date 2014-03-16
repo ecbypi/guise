@@ -1,3 +1,6 @@
+require 'codeclimate-test-reporter'
+CodeClimate::TestReporter.start
+
 require 'pry'
 require 'active_record'
 require 'factory_girl'
