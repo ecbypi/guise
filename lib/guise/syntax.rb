@@ -51,10 +51,7 @@ module Guise
 
       default_scope -> { send(model_name.plural) }
 
-      callback = SourceCallback.new(self.name, options[:attribute])
-
-      after_initialize callback
-      after_create callback
+      after_initialize SourceCallback.new(self.name, options[:attribute])
     end
 
     def guise_for(class_name, options = {})
@@ -96,10 +93,7 @@ module Guise
 
       default_scope -> { where(attribute => value) }
 
-      callback = AssociationCallback.new(value, attribute)
-
-      after_initialize callback
-      before_create callback
+      after_initialize AssociationCallback.new(value, attribute)
     end
   end
 end
