@@ -1,7 +1,7 @@
 PATH
   remote: ../
   specs:
-    guise (0.4.0)
+    guise (0.4.1)
       activerecord (>= 3.1, < 4.1)
       activesupport (>= 3.1, < 4.1)
 
