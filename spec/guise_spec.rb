@@ -137,6 +137,10 @@ describe Guise do
 
       created_record = Technician.create!
       expect(created_record).to have_guise :technician
+
+      # Ensure `after_initialize` only runs when the record hasn't been persisted.
+      existing_record = Technician.find(technician.id)
+      expect(existing_record.guises.length).to eq 1
     end
   end
 

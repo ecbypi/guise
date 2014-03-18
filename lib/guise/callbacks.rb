@@ -8,7 +8,9 @@ module Guise
 
   class SourceCallback < Callback
     def after_initialize(record)
-      record.guises.build(@attribute => @guise)
+      if record.new_record?
+        record.guises.build(@attribute => @guise)
+      end
     end
   end
 
