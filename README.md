@@ -38,7 +38,7 @@ $ gem install guise
 Create a table to store your type information:
 
 ```
-rails generate model user_role user:references title:string
+rails generate model user_role user:references title:string:uniq
 rake db:migrate
 ```
 
@@ -48,7 +48,7 @@ the sublcass name will be stored in.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :DeskWorker, :MailForwarder, :association => :user_roles, :attribute => :title
+  has_guises :DeskWorker, :MailForwarder, association: :user_roles, attribute: :title
 end
 ```
 
@@ -131,15 +131,15 @@ with the addition that you can specify not to validate attributes.
 ```ruby
 class Person < ActiveRecord::Base
   has_guises :Admin, :Engineer,
-             :association => :positions,
-             :attribute => :rank,
-             :foreign_key => :employee_id,
-             :class_name => :JobTitle
+             association: :positions,
+             attribute: :rank,
+             foreign_key: :employee_id,
+             class_name: :JobTitle
 end
 
 class JobTitle < ActiveRecord::Base
   guise_for :Person,
-            :foreign_key => :employee_id,
-            :validate => false # skip setting up validations
+            foreign_key: :employee_id,
+            validate: false # skip setting up validations
 end
 ```
