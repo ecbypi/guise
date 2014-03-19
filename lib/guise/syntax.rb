@@ -13,7 +13,7 @@ module Guise
       guises      = guises.map(&:to_s)
       association = options.fetch(:association)
       attribute   = options.fetch(:attribute)
-      table_name  = options[:table_name] || association
+      join_table  = options[:table_name] || association
 
       Guise.registry[self.name] = {
         names: guises,
@@ -23,7 +23,7 @@ module Guise
 
       guises.each do |guise|
         method_name = guise.underscore
-        scope method_name.pluralize, -> { joins(association).where(table_name => { attribute => guise }) }
+        scope method_name.pluralize, -> { joins(association).where(join_table => { attribute => guise }) }
 
         define_method "#{method_name}?" do
           has_guise?(guise)
