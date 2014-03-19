@@ -126,7 +126,7 @@ describe Guise do
 
   describe '.guise_of' do
     it "sets default scope to limit to records of the class's type" do
-      technician_ids = Technician.pluck(:id)
+      technician_ids = User.technicians.pluck(:id)
 
       expect(technician_ids).to eq [technician.id]
     end
@@ -141,6 +141,10 @@ describe Guise do
       # Ensure `after_initialize` only runs when the record hasn't been persisted.
       existing_record = Technician.find(technician.id)
       expect(existing_record.guises.length).to eq 1
+    end
+
+    it 'sets default scope to ensure records are not readonly' do
+      expect(Technician.first).not_to be_readonly
     end
   end
 

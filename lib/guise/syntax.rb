@@ -23,7 +23,7 @@ module Guise
 
       guises.each do |guise|
         method_name = guise.underscore
-        scope method_name.pluralize, -> { joins(association).where(join_table => { attribute => guise }) }
+        scope method_name.pluralize, -> { select("#{self.table_name}.*").joins(association).where(join_table => { attribute => guise }) }
 
         define_method "#{method_name}?" do
           has_guise?(guise)
