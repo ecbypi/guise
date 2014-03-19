@@ -23,6 +23,23 @@ describe Guise do
       expect(technicians).not_to include supervisor
     end
 
+    it 'aliases the association methods to `guise=` and `guises=`' do
+      record = create(:user)
+
+      expect(record.guises).to eq []
+
+      record.guises = [build(:user_role)]
+      record.guises << build(:user_role, name: 'Supervisor')
+
+      expect(record.guises(true)).to have(2).records
+
+      expect(record.guise_ids).to have(2).items
+
+      record.guise_ids = []
+
+      expect(record.guises).to have(0).records
+    end
+
     it 'handles non-standard table names and foreign key attributes' do
       person = create(:person)
       create(:permission, person: person)

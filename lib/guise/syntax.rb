@@ -36,6 +36,9 @@ module Guise
         association_singular = association.to_s.singularize
 
         alias_method :guises, association
+        alias_method :guises=, "#{association}="
+        alias_method :guise_ids, "#{association_singular}_ids"
+        alias_method :guise_ids=, "#{association_singular}_ids="
         alias_method "has_#{association_singular}?", :has_guise?
         alias_method "has_#{association}?", :has_guises?
         alias_method "has_any_#{association}?", :has_any_guises?
