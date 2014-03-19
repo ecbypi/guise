@@ -146,6 +146,14 @@ describe Guise do
     it 'sets default scope to ensure records are not readonly' do
       expect(Technician.first).not_to be_readonly
     end
+
+    it 'raises an error if no guises are registered for the class' do
+      expect do
+        Class.new(ActiveRecord::Base) do
+          guise_of :Model
+        end
+      end
+    end
   end
 
   describe ".guise_for" do
@@ -168,6 +176,14 @@ describe Guise do
 
       expect(supervisor_roles).to include supervisor_role
       expect(supervisor_roles).not_to include technician_role
+    end
+
+    it 'raises an error if no guises are registered for the class' do
+      expect do
+        Class.new(ActiveRecord::Base) do
+          guise_for :Model
+        end
+      end
     end
 
     describe "adds validations to ensure guise attribute is" do
@@ -198,6 +214,14 @@ describe Guise do
 
       expect(new_technician_role.name).to eq 'Technician'
       expect(created_technician_role.name).to eq 'Technician'
+    end
+
+    it 'raises an error if no guises are registered for the class' do
+      expect do
+        Class.new(ActiveRecord::Base) do
+          scoped_guise_for :Model
+        end
+      end.to raise_error
     end
   end
 end
