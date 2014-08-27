@@ -33,13 +33,13 @@ describe Guise do
       record.guises = [build(:user_role, user: record)]
       record.guises << build(:user_role, name: 'Supervisor', user: record)
 
-      expect(record.guises(true)).to have(2).records
+      expect(record.guises(true).length).to eq 2
 
-      expect(record.guise_ids).to have(2).items
+      expect(record.guise_ids.length).to eq 2
 
       record.guise_ids = []
 
-      expect(record.guises).to have(0).records
+      expect(record.guises.length).to eq 0
     end
 
     it 'handles non-standard table names and foreign key attributes' do
