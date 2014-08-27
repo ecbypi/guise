@@ -28,8 +28,10 @@ describe Guise do
 
       expect(record.guises).to eq []
 
-      record.guises = [build(:user_role)]
-      record.guises << build(:user_role, name: 'Supervisor')
+      # NOTE: The user is assigned in factory_girl to deal with a Rails 3.1
+      # issue
+      record.guises = [build(:user_role, user: record)]
+      record.guises << build(:user_role, name: 'Supervisor', user: record)
 
       expect(record.guises(true)).to have(2).records
 
@@ -143,7 +145,7 @@ describe Guise do
 
   describe '.guise_of' do
     it "sets default scope to limit to records of the class's type" do
-      technician_ids = User.technicians.pluck(:id)
+      technician_ids = User.technicians.map(&:id)
 
       expect(technician_ids).to eq [technician.id]
     end
@@ -220,7 +222,7 @@ describe Guise do
 
   describe '.scoped_guise_of' do
     it 'sets default scope' do
-      names = TechnicianUserRole.pluck(:name).uniq
+      names = TechnicianUserRole.all.map(&:name).uniq
 
       expect(names).to eq ['Technician']
     end

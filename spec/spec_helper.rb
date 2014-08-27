@@ -7,7 +7,9 @@ require 'factory_girl'
 require 'shoulda-matchers'
 require 'guise'
 
-I18n.enforce_available_locales = false
+if I18n.respond_to?(:enforce_available_locales)
+  I18n.enforce_available_locales = false
+end
 
 ActiveRecord::Base.establish_connection(
   adapter: 'sqlite3',
