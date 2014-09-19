@@ -3,18 +3,36 @@
 [![Build Status](https://travis-ci.org/ecbypi/guise.png?branch=master)](https://travis-ci.org/ecbypi/guise)
 [![Code Climate](https://codeclimate.com/github/ecbypi/guise.png)](https://codeclimate.com/github/ecbypi/guise)
 
-A typical quick-to-setup role management system involves `users` and `roles`
-tables with a join table between them to determine membership to a role. A
-problem with this is that application behavior then depends on corresponding
-records existing in the `roles` table. When testing, `Role` records need to be
-created for each test run they're used in, but need to be only created once to
-ensure uniqueness. Additionally, adding a new role requires a data migration to
-insert the role in production.
+A typical, quick-and-easy role management system involves `users` and `roles`
+tables with a join table between them to determine membership to a role:
+
+```ruby
+class User < ActiveRecord::Base
+  has_many :user_roles
+  has_many :roles, through: :user_roles
+end
+
+class UserRole < ActiveRecord::Bae
+  belongs_to :user
+  belongs_to :role
+end
+
+class Role < ActiveRecord::Base
+  has_many :user_roles
+  has_many :users, through: :user_roles
+end
+```
+
+A problem with this is that in simple setups, application behavior tends to be
+hard-coded to rely on the existence of a database record representing the role
+object in the `roles` table.
 
 `guise` de-normalizes the above setup by storing the name of the role as a
-column in what would be the join table between `users` and `roles`.  For
-example, assume a `users` table and `roles` table where the `roles` table has a
-`title` column represented by the following `activerecord` classes:
+column in what would be the join table between `users` and `roles`. The allowed
+values are limited to the values defined in a declaration on the model that is
+meant to have different roles.
+
+Given `User` and `Role` models where the `Role` model has a `value` column.
 
 ```ruby
 class User < ActiveRecord::Base
@@ -24,12 +42,12 @@ class Role < ActiveRecord::Base
 end
 ```
 
-By adding the method call `has_guises` to `User` and `guise_for` to
+By adding the following method call to `has_guises` to `User` and `guise_for` to
 `Role`:
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :DeskWorker, :MailForwarder, association: :roles, attribute: :title
+  has_guises :DeskWorker, :MailForwarder, association: :roles, attribute: :value
 end
 
 class Role < ActiveRecord::Base
@@ -37,26 +55,25 @@ class Role < ActiveRecord::Base
 end
 ```
 
-The equivalent associations, model scopes, methods and validations are
-configured:
+The equivalent associations, model scopes and validations are configured:
 
 ```ruby
 class User < ActiveRecord::Base
   has_many :roles
 
-  scope :desk_workers, -> { joins(:roles).where(roles: { title: "DeskWorker" }) }
-  scope :mail_forwarders, -> { joins(:roles).where(roles: { title: "MailForwarder" }) }
+  scope :desk_workers, -> { joins(:roles).where(roles: { value: "DeskWorker" }) }
+  scope :mail_forwarders, -> { joins(:roles).where(roles: { value: "MailForwarder" }) }
 
-  def has_role?(title)
-    roles.detect { |role| role.title == title }
+  def has_role?(value)
+    roles.detect { |role| role.value == value }
   end
 
-  def has_roles?(*titles)
-    titles.all? { |title| has_role?(title) }
+  def has_roles?(*values)
+    values.all? { |value| has_role?(value)
   end
 
-  def has_any_roles?(*titles)
-    titles.any? { |title| has_role?(title) }
+  def has_any_roles?(*values)
+    values.any? { |value| has_role?(value)
   end
 
   def desk_worker?
@@ -71,11 +88,11 @@ end
 class Role < ActiveRecord::Base
   belongs_to :user
 
-  scope :desk_workers, -> { where(title: "DeskWorker") }
-  scope :mail_forwarders, -> { where(title: "MailForwarder") }
+  scope :desk_workers, -> { where(value: "DeskWorker") }
+  scope :mail_forwarders, -> { where(value: "MailForwarder") }
 
   validates(
-    :title,
+    :value,
     presence: true,
     uniqueness: { scope: :user_id },
     inclusion: { in: %w( DeskWorker MailForwarder ) }
@@ -83,13 +100,9 @@ class Role < ActiveRecord::Base
 end
 ```
 
-This allows filtering by role and assigning records to a role without requiring
-an existing record in the database to represent it. The predicate methods can be
-used for permissions / authorization.
-
-It is also possible to define subclasses of `Role` and `User` that are
-automatically scoped to the record associated with that role. This is described
-in greater detail below.
+This allows filtering users by role / type and assigning records a role without
+requiring an existing record in the database. The predicate methods can be used
+for permissions / authorization.
 
 ## Installation
 
@@ -116,36 +129,20 @@ $ gem install guise
 Create a table to store your type information:
 
 ```
-rails generate model role user:references title:string:uniq
+rails generate model role user:references value:string:uniq
 rake db:migrate
 ```
 
-It is recommended to add a unique index on the foreign key and guise attribute
-columns and a single-column index on the guise attribute column.  In this case
-the columns are `user_id` and `title`.
-
-```ruby
-class CreateRoles < ActiveRecord::Migration
-  def change
-    create_table do |t|
-      t.string :title
-      t.references :user, index: true
-      t.timestamps
-    end
-
-    add_index :roles, [:user_id, :title], unique: true
-    add_index :roles, :title
-  end
-end
-```
+It is recommended to add an index on the foreign key and guise attribute. In
+this case the columns are `user_id` and `value`.
 
 Then add `has_guises` to your model. This will setup the `has_many` association
 for you. It requires the name of the association and name of the column that
-the role value will be stored in.
+the subclass name will be stored in.
 
 ```ruby
 class User < ActiveRecord::Base
-  has_guises :DeskWorker, :MailForwarder, association: :user_roles, attribute: :title
+  has_guises :DeskWorker, :MailForwarder, association: :roles, attribute: :value
 end
 ```
 
@@ -185,17 +182,17 @@ This is equivalent to the following:
 
 ```ruby
 class DeskWorker < User
-  default_scope -> { joins(:roles).where(roles: { title: "DeskWorker"}) }
+  default_scope -> { joins(:roles).where(roles: { value: 'DeskWorker'}) }
 
   after_initialize do
-    self.guises.build(title: "DeskWorker")
+    self.guises.build(value: 'DeskWorker')
   end
 end
 ```
 
-To scope the association class to a role, use `scoped_guise_for`. The name of
-the class must be `<guise_value><association_class_name>` (i.e. the role it
-represents combined with the name of the parent class).
+To scope the association class to a guise, use `scoped_guise_for`. The name of
+the class must be `<guise_value><association_class_name>` (i.e. the guise it
+represents combined with the name of the parent class.
 
 ```ruby
 class DeskWorkerUserRole < UserRole
@@ -207,10 +204,10 @@ This sets up the class as follows:
 
 ```ruby
 class DeskWorkerUserRole < UserRole
-  default_scope -> { where(title: "DeskWorker") }
+  default_scope -> { where(value: "DeskWorker") }
 
   after_initialize do
-    self.title = "DeskWorker"
+    self.value = "DeskWorker"
   end
 end
 ```

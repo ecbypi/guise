@@ -79,8 +79,8 @@ module Guise
       end
     end
 
-    # Specifies that the calling model class is a subclass a model configured
-    # with {#has_guises} specified by `class_name`.
+    # Specifies that the model is a subclass of a model configured with
+    # {#has_guises} specified by `class_name`.
     #
     # Configures the caller with the correct `default_scope`. Given the
     # following definition with `has_guises`:

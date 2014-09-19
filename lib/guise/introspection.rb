@@ -1,7 +1,7 @@
-require "active_support/core_ext/string/inflections"
+require 'active_support/core_ext/string/inflection'
 
 module Guise
-  # {Introspection} handles checking if a record has specific `guise` records
+  # {Introspection} handles checking if a record has one or more `guise` records
   # associated with it.
   module Introspection
     # Checks if the record has a `guise` record identified by on the specified
@@ -28,7 +28,7 @@ module Guise
       values.any? { |value| has_guise?(value) }
     end
 
-    # Checks if the record has a `guise` record for each of the specified
+    # Checks if the record has `guise` records for all of the specified
     # `values`.
     #
     # @param [Array<String, Class, Symbol>] value `guise` to check
