@@ -27,7 +27,7 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "factory_girl", "~> 4.4"
   gem.add_development_dependency "shoulda-matchers", "~> 2.5"
-  gem.add_development_dependency "appraisal", '~> 0.5'
+  gem.add_development_dependency "appraisal", ">= 1.0"
   gem.add_development_dependency 'pry', '~> 0.9'
   gem.add_development_dependency 'codeclimate-test-reporter', '~> 0.3'
   gem.add_development_dependency 'yard', '~> 0.8'
@@ -37,6 +37,6 @@ Gem::Specification.new do |gem|
     gem.add_development_dependency 'jdbc-sqlite3'
   else
     gem.add_development_dependency 'sqlite3', '~> 1.3'
-    gem.add_development_dependency 'redcarpet', '~> 2.1'
+    gem.add_development_dependency "redcarpet", "~> 3.2"
   end
 end
