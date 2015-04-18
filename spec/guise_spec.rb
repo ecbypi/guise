@@ -5,6 +5,12 @@ describe Guise do
   let!(:supervisor) { Supervisor.create!(email: "jane@manag.er") }
   let!(:technician) { Technician.create!(email: "sarah@fix.it") }
 
+  def self.active_record_has_pluck_and_not_version_4_0?
+    ActiveRecord::VERSION::STRING >= "4.1" ||
+      ActiveRecord::VERSION::STRING <= "3.2" &&
+      ActiveRecord::Relation.method_defined?(:pluck)
+  end
+
   after do
     User.delete_all
     UserRole.delete_all
@@ -23,6 +29,53 @@ describe Guise do
       expect(technicians).to include technician.id
       expect(technicians).not_to include user.id
       expect(technicians).not_to include supervisor.id
+    end
+
+    shared_examples(
+      "building and saving associated records"
+    ) do |source, strategy|
+      it "sets up scopes to correctly create associated records" do
+        technician = source.public_send(strategy)
+
+        expect(technician).to be_technician
+        expect(technician.user_roles.map(&:name)).to eq ["Technician"]
+
+        if technician.new_record?
+          technician.save!
+
+          expect(technician.reload).to be_technician
+        end
+      end
+    end
+
+    include_examples(
+      "building and saving associated records",
+      User.technicians,
+      :new
+    )
+
+    include_examples(
+      "building and saving associated records",
+      User.technicians,
+      :create
+    )
+
+    include_examples(
+      "building and saving associated records",
+      Technician,
+      :new
+    )
+
+    include_examples(
+      "building and saving associated records",
+      Technician,
+      :create
+    )
+
+    if active_record_has_pluck_and_not_version_4_0?
+      it "sets up scopes to correctly handle `ActiveRecord::Relation#pluck`" do
+        expect(Technician.all.pluck(:id)).to eq [technician.id]
+      end
     end
 
     it 'aliases the association methods to `guise=` and `guises=`' do
@@ -147,7 +200,7 @@ describe Guise do
 
   describe '.guise_of' do
     it "sets default scope to limit to records of the class's type" do
-      technician_ids = User.technicians.map(&:id)
+      technician_ids = Technician.all.map(&:id)
 
       expect(technician_ids).to eq [technician.id]
     end
@@ -173,13 +226,11 @@ describe Guise do
         Class.new(ActiveRecord::Base) do
           guise_of :Model
         end
-      end
+      end.to raise_error Guise::DefinitionNotFound
     end
   end
 
   describe ".guise_for" do
-    subject { UserRole.new }
-
     it "sets up belongs_to" do
       reflection = UserRole.reflect_on_association(:user)
 
@@ -206,7 +257,7 @@ describe Guise do
         Class.new(ActiveRecord::Base) do
           guise_for :Model
         end
-      end
+      end.to raise_error Guise::DefinitionNotFound
     end
 
     it "adds validations to ensure presence, inclusion and uniqueness " \
@@ -252,7 +303,7 @@ describe Guise do
         Class.new(ActiveRecord::Base) do
           scoped_guise_for :Model
         end
-      end.to raise_error ArgumentError
+      end.to raise_error Guise::DefinitionNotFound
     end
   end
 end

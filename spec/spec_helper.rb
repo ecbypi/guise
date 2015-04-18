@@ -57,7 +57,14 @@ class TechnicianUserRole < UserRole
 end
 
 class Person < ActiveRecord::Base
-  has_guises :Admin, :Manager, :Reviewer, association: :permissions, attribute: :privilege, foreign_key: :employee_id, table_name: :privileges
+  has_guises(
+    :Admin,
+    :Manager,
+    :Reviewer,
+    association: :permissions,
+    attribute: :privilege,
+    foreign_key: :employee_id
+  )
 end
 
 class Permission < ActiveRecord::Base

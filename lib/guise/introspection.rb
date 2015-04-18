@@ -12,11 +12,14 @@ module Guise
     def has_guise?(value)
       value = value.to_s.classify
 
-      unless guise_options[:names].any? { |name| name == value }
+      unless guise_options.values.include?(value)
         raise ArgumentError, "no such guise #{value}"
       end
 
-      guises.any? { |guise| !guise.marked_for_destruction? && guise[guise_options[:attribute]] == value }
+      association(guise_options.association_name).reader.any? do |record|
+        !record.marked_for_destruction? &&
+          record[guise_options.attribute] == value
+      end
     end
 
     # Checks if the record has any `guise` records with identified by any of
@@ -35,12 +38,6 @@ module Guise
     # @return [true, false]
     def has_guises?(*values)
       values.all? { |value| has_guise?(value) }
-    end
-
-    private
-
-    def guise_options
-      Guise.registry[self.class.table_name.classify]
     end
   end
 end
