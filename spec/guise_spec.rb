@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe Guise do
-  let!(:user) { create(:user) }
-  let!(:supervisor) { create(:supervisor) }
-  let!(:technician) { create(:technician) }
+  let!(:user) { User.create!(email: "bob@bob.bob") }
+  let!(:supervisor) { Supervisor.create!(email: "jane@manag.er") }
+  let!(:technician) { Technician.create!(email: "sarah@fix.it") }
 
   after do
     User.delete_all
@@ -12,26 +12,27 @@ describe Guise do
 
   describe ".has_guises" do
     it "sets up has_many association" do
-      expect(user).to have_many :user_roles
+      reflection = User.reflect_on_association(:user_roles)
+
+      expect(reflection).not_to be_nil
     end
 
     it "adds scopes for each type" do
-      technicians = User.technicians
+      technicians = User.technicians.map(&:id)
 
-      expect(technicians).to include technician
-      expect(technicians).not_to include user
-      expect(technicians).not_to include supervisor
+      expect(technicians).to include technician.id
+      expect(technicians).not_to include user.id
+      expect(technicians).not_to include supervisor.id
     end
 
     it 'aliases the association methods to `guise=` and `guises=`' do
-      record = create(:user)
+      record = User.create!
 
       expect(record.guises).to eq []
 
-      # NOTE: The user is assigned in factory_girl to deal with a Rails 3.1
-      # issue
-      record.guises = [build(:user_role, user: record)]
-      record.guises << build(:user_role, name: 'Supervisor', user: record)
+      # NOTE: The user is assigned to deal with a Rails 3.1 issue
+      record.guises = [UserRole.new(name: "Technician", user: record)]
+      record.guises << UserRole.new(name: "Supervisor", user: record)
 
       expect(record.guises(true).length).to eq 2
 
@@ -43,10 +44,11 @@ describe Guise do
     end
 
     it 'handles non-standard table names and foreign key attributes' do
-      person = create(:person)
-      create(:permission, person: person)
+      person = Person.create!
+      Permission.create!(person: person, privilege: "Admin")
+      reflection = Person.reflect_on_association(:permissions)
 
-      expect(person).to have_many :permissions
+      expect(reflection).not_to be_nil
       expect(Person.admins).to include person
     end
   end
@@ -67,8 +69,8 @@ describe Guise do
     end
 
     it 'ignores records marked for destruction' do
-      technician_role = build(:user_role, name: 'Technician')
-      technician_user = create(:user, user_roles: [technician_role])
+      technician_role = UserRole.new(name: "Technician")
+      technician_user = User.create(user_roles: [technician_role])
 
       expect(technician_user).to have_guise :technician
 
@@ -89,7 +91,7 @@ describe Guise do
 
   describe "#has_guises?" do
     before do
-      @role = create(:user_role, name: 'Technician', user: supervisor)
+      @role = UserRole.create!(name: "Technician", user: supervisor)
     end
 
     after do
@@ -102,9 +104,9 @@ describe Guise do
     end
 
     it 'ignores records marked for destruction' do
-      technician_role = build(:user_role, name: 'Technician')
-      supervisor_role = build(:user_role, name: 'Supervisor')
-      user = create(:user, user_roles: [technician_role, supervisor_role])
+      technician_role = UserRole.new(name: "Technician")
+      supervisor_role = UserRole.new(name: "Supervisor")
+      user = User.create!(user_roles: [technician_role, supervisor_role])
 
       expect(user).to have_guises :technician, :supervisor
 
@@ -128,8 +130,8 @@ describe Guise do
     end
 
     it 'ignores records marked for destruction' do
-      technician_role = build(:user_role, name: 'Technician')
-      technician_user = create(:user, user_roles: [technician_role])
+      technician_role = UserRole.new(name: "Technician")
+      technician_user = User.create!(user_roles: [technician_role])
 
       expect(technician_user).to have_any_guises :technician, :supervisor
 
@@ -179,12 +181,14 @@ describe Guise do
     subject { UserRole.new }
 
     it "sets up belongs_to" do
-      should belong_to(:user)
+      reflection = UserRole.reflect_on_association(:user)
+
+      expect(reflection).not_to be_nil
     end
 
     it 'defines scopes for each guise' do
-      technician_role = create(:technician_role)
-      supervisor_role = create(:supervisor_role)
+      technician_role = UserRole.create(name: "Technician")
+      supervisor_role = UserRole.create(name: "Supervisor")
 
       technician_roles = UserRole.technicians
 
@@ -205,18 +209,26 @@ describe Guise do
       end
     end
 
-    describe "adds validations to ensure guise attribute is" do
-      it "present" do
-        should validate_presence_of(:name)
-      end
+    it "adds validations to ensure presence, inclusion and uniqueness " \
+      "of the guise attribute" do
+      user_role = UserRole.new
+      user_role.valid?
 
-      it "unique per resource" do
-        should validate_uniqueness_of(:name).scoped_to(:user_id)
-      end
+      expect(user_role.errors[:name]).to match_array [
+        I18n.t("errors.messages.blank"),
+        I18n.t("errors.messages.inclusion")
+      ]
 
-      it "is one of the guise names provided" do
-        expect { create(:user_role, name: 'Farmer') }.to raise_error ActiveRecord::RecordInvalid
-      end
+      user_role.user = technician
+      user_role.name = "Technician"
+      user_role.valid?
+
+      expect(user_role.errors[:name]).to eq [
+        I18n.t(
+          "activerecord.errors.messages.taken",
+          default: :"errors.messages.taken"
+        )
+      ]
     end
   end
 
@@ -240,7 +252,7 @@ describe Guise do
         Class.new(ActiveRecord::Base) do
           scoped_guise_for :Model
         end
-      end.to raise_error
+      end.to raise_error ArgumentError
     end
   end
 end

@@ -1,9 +1,8 @@
 sudo: false
 rvm:
-  - 1.9.3
   - 2.0.0
-  - 2.1.6
-  - jruby-19mode
+  - 2.1.7
+  - 2.2.3
 gemfile:
   - gemfiles/3.1.gemfile
   - gemfiles/3.2.gemfile
@@ -18,7 +17,7 @@ env:
     - secure: "I0cDQLpPt8NlOswL5Vomim4gb+NHvLW+0mPf2iimP1gTE5C+3PnoomCRx//0CyI/NSMhjrHg8DbrkvtBCfAYinrgzCi3cUkofi0zn5T6GaGUfYQz4Bmh7fmvppRVpVDCSXMOzOSYYEXBnie5b865BYTDrt1U3aM8qvq7pd/XOXg="
 matrix:
   exclude:
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: gemfiles/3.1.gemfile
-    - rvm: 2.2.2
+    - rvm: 2.2.3
       gemfile: gemfiles/3.2.gemfile

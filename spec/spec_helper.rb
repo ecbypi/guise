@@ -1,10 +1,9 @@
 require 'codeclimate-test-reporter'
 CodeClimate::TestReporter.start
 
+require "byebug"
 require 'pry'
 require 'active_record'
-require 'factory_girl'
-require 'shoulda-matchers'
 require 'guise'
 
 if I18n.respond_to?(:enforce_available_locales)
@@ -20,7 +19,6 @@ ActiveRecord::Migration.verbose = false
 
 ActiveRecord::Schema.define do
   create_table :users, force: true do |t|
-    t.string :name
     t.string :email
   end
 
@@ -68,8 +66,6 @@ class Permission < ActiveRecord::Base
   guise_for :Person, foreign_key: :employee_id
 end
 
-FactoryGirl.find_definitions
 RSpec.configure do |config|
   config.order = 'random'
-  config.include FactoryGirl::Syntax::Methods
 end
