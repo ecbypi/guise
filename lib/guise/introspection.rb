@@ -1,4 +1,4 @@
-require 'active_support/core_ext/string/inflection'
+require "active_support/core_ext/string/inflections"
 
 module Guise
   # {Introspection} handles checking if a record has one or more `guise` records
