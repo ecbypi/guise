@@ -1,6 +1,7 @@
 require "active_support/core_ext/string/inflections"
 require "active_support/core_ext/array/extract_options"
 require 'active_support/core_ext/module/attribute_accessors'
+require "active_support/lazy_load_hooks"
 
 require 'guise/version'
 require "guise/errors"
@@ -29,14 +30,10 @@ module Guise
   def self.register_association(association_class, source_class_name, association_options)
     options = registry[source_class_name]
 
-    GuiseForBuilder.new(
-      association_class,
-      options,
-      association_options
-    ).build!
+    GuiseForBuilder.new(association_class, options, association_options).build!
   end
 end
 
-if defined?(ActiveRecord)
-  ActiveRecord::Base.extend(Guise::Syntax)
+ActiveSupport.on_load(:active_record) do
+  extend Guise::Syntax
 end

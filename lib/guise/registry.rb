@@ -13,10 +13,6 @@ module Guise
     end
 
     def []=(name, definition)
-      if @registry.key?(name)
-        raise DuplicateDefinition.new(name)
-      end
-
       @registry[name] = definition
     end
   end

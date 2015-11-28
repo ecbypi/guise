@@ -3,8 +3,9 @@ CodeClimate::TestReporter.start
 
 require "byebug"
 require 'pry'
-require 'active_record'
 require 'guise'
+require 'active_record'
+require "active_record/base"
 
 if I18n.respond_to?(:enforce_available_locales)
   I18n.enforce_available_locales = false
