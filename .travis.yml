@@ -2,14 +2,16 @@ sudo: false
 cache: bundler
 rvm:
   - 2.0.0
-  - 2.1.7
-  - 2.2.3
+  - 2.1.8
+  - 2.2.4
+  - 2.3.0
 gemfile:
   - gemfiles/3.1.gemfile
   - gemfiles/3.2.gemfile
   - gemfiles/4.0.gemfile
   - gemfiles/4.1.gemfile
   - gemfiles/4.2.gemfile
+  - gemfiles/5.0.gemfile
 script: 'bundle exec rake'
 env:
   global:
@@ -17,7 +19,15 @@ env:
     - secure: "I0cDQLpPt8NlOswL5Vomim4gb+NHvLW+0mPf2iimP1gTE5C+3PnoomCRx//0CyI/NSMhjrHg8DbrkvtBCfAYinrgzCi3cUkofi0zn5T6GaGUfYQz4Bmh7fmvppRVpVDCSXMOzOSYYEXBnie5b865BYTDrt1U3aM8qvq7pd/XOXg="
 matrix:
   exclude:
-    - rvm: 2.2.3
+    - rvm: 2.2.4
       gemfile: gemfiles/3.1.gemfile
-    - rvm: 2.2.3
+    - rvm: 2.3.0
+      gemfile: gemfiles/3.1.gemfile
+    - rvm: 2.2.4
       gemfile: gemfiles/3.2.gemfile
+    - rvm: 2.0.0
+      gemfile: gemfiles/5.0.gemfile
+    - rvm: 2.1.8
+      gemfile: gemfiles/5.0.gemfile
+  allow_failures:
+    - gemfile: gemfiles/5.0.gemfile

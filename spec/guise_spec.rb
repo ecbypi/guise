@@ -87,7 +87,7 @@ describe Guise do
       record.guises = [UserRole.new(name: "Technician", user: record)]
       record.guises << UserRole.new(name: "Supervisor", user: record)
 
-      expect(record.guises(true).length).to eq 2
+      expect(record.reload.guises.length).to eq 2
 
       expect(record.guise_ids.length).to eq 2
 
