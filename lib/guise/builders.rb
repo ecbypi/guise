@@ -44,7 +44,7 @@ module Guise
 
         source_class.class_eval <<-METHOD
           def #{method_name}?
-            has_guise?(#{value})
+            has_guise?('#{value}')
           end
         METHOD
       end

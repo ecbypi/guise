@@ -139,6 +139,9 @@ describe Guise do
     it 'is wrapped for each guise specified' do
       expect(user).not_to be_technician
       expect(technician).to be_technician
+
+      expect(user).not_to be_explorer
+      expect(technician).not_to be_explorer
     end
   end
 

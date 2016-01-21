@@ -38,7 +38,7 @@ ActiveRecord::Schema.define do
 end
 
 class User < ActiveRecord::Base
-  has_guises :Technician, :Supervisor, association: :user_roles, attribute: :name
+  has_guises :Technician, :Supervisor, :Explorer, association: :user_roles, attribute: :name
 end
 
 class Technician < User
