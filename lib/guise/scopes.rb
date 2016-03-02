@@ -5,12 +5,8 @@ module Guise
       @value = value
       @options = options
 
-      @options.register_scope(value, self)
+      @options.register_scope(@value, self)
     end
-
-    private
-
-    attr_reader :value, :options
   end
 
   # @api private
@@ -33,15 +29,15 @@ module Guise
     end
 
     def source_class
-      options.source_class
+      @options.source_class
     end
 
     def association_name
-      options.association_name
+      @options.association_name
     end
 
     def association_relation
-      options.scope(value, :guise_for).call
+      @options.scope(@value, :guise_for).call
     end
   end
 
@@ -59,7 +55,7 @@ module Guise
   # @api private
   class GuiseForScope < Scope
     def call
-      options.association_class.where(options.attribute => value)
+      @options.association_class.where(@options.attribute => @value)
     end
 
     def type
