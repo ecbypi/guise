@@ -3,7 +3,7 @@ engines:
   brakeman:
     enabled: false
   bundler-audit:
-    enabled: true
+    enabled: false
   csslint:
     enabled: false
   duplication:
@@ -24,3 +24,9 @@ engines:
 ratings:
   paths:
   - "lib/**"
+exclude_paths:
+- "*.gemspec"
+- "Appraisals"
+- "LICENSE"
+- "Rakefile"
+- "gemfiles/**"
