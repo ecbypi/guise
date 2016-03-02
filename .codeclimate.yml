@@ -1,0 +1,26 @@
+---
+engines:
+  brakeman:
+    enabled: false
+  bundler-audit:
+    enabled: true
+  csslint:
+    enabled: false
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+  eslint:
+    enabled: false
+  fixme:
+    enabled: true
+  reek:
+    enabled: false
+  rubocop:
+    enabled: true
+  scss-lint:
+    enabled: false
+ratings:
+  paths:
+  - "lib/**"
