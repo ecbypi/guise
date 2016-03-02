@@ -69,7 +69,7 @@ module Guise
     end
 
     def default_association_options
-      { foreign_key: "#{source_association_name}_id" }
+      { foreign_key: "#{source_association_name}_id".to_sym }
     end
   end
 end
