@@ -19,15 +19,14 @@ Gem::Specification.new do |gem|
   gem.version       = Guise::VERSION
   gem.license       = 'MIT'
 
-  gem.required_ruby_version = ">= 2.0.0"
+  gem.required_ruby_version = ">= 2.3.0"
 
-  gem.add_dependency "activerecord", ">= 3.1", "< 5.0"
-  gem.add_dependency "activesupport", ">= 3.1", "< 5.0"
+  gem.add_dependency "activerecord", ">= 4.2", "< 6.0"
+  gem.add_dependency "activesupport", ">= 4.2", "< 6.0"
   gem.add_development_dependency "appraisal", ">= 1.0"
-  gem.add_development_dependency "byebug", "~> 5.0"
-  gem.add_development_dependency "codeclimate-test-reporter", "~> 0.3"
+  gem.add_development_dependency "byebug", "~> 10.0"
   gem.add_development_dependency "pry", "~> 0.9"
-  gem.add_development_dependency "rake", "~> 10.1"
+  gem.add_development_dependency "rake", "~> 12.3"
   gem.add_development_dependency "redcarpet", "~> 3.2"
   gem.add_development_dependency "rspec", "~> 3.0"
   gem.add_development_dependency "sqlite3", "~> 1.3"
