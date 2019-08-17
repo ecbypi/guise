@@ -21,8 +21,8 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = ">= 2.3.0"
 
-  gem.add_dependency "activerecord", ">= 4.2", "< 6.0"
-  gem.add_dependency "activesupport", ">= 4.2", "< 6.0"
+  gem.add_dependency "activerecord", ">= 4.2"
+  gem.add_dependency "activesupport", ">= 4.2"
   gem.add_development_dependency "appraisal", ">= 1.0"
   gem.add_development_dependency "byebug", "~> 10.0"
   gem.add_development_dependency "pry", "~> 0.9"
