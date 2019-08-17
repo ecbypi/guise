@@ -1,6 +1,12 @@
 # Changelog
 
 ## Unreleased
+
+## [0.8.0]
+## Added
+* Rails 6 support
+* Testing on ruby 2.6
+
 ### Fixed
 * Fix how `:validate` option to `guise_for` was being handled. Passing
   `validate: false` would still define validations.

@@ -4,10 +4,10 @@ require File.expand_path('../lib/guise/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Eduardo Gutierrez"]
   gem.email         = ["edd_d@mit.edu"]
-  gem.description   = %q{ Multiple inheritance STI }
+  gem.description   = %q{ Flexible roles system for any context }
   gem.summary       = %q{
-                        Guise provides methods to setup single table
-                        inheritance with multiple inheritances possible.
+                        Guise manages roles without having to define them in as records in the
+                        database. Also works as multi-table inheritance.
                       }
   gem.homepage      = "https://github.com/ecbypi/guise"
 
