@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+### Fixed
+* Fix how `:validate` option to `guise_for` was being handled. Passing
+  `validate: false` would still define validations.
+
 ## [0.7.0] 2018-04-09
 ### Removed
 

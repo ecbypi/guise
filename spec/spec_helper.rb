@@ -68,7 +68,7 @@ end
 class Permission < ActiveRecord::Base
   self.table_name = :privileges
 
-  guise_for :Person, foreign_key: :employee_id
+  guise_for :Person, foreign_key: :employee_id, validate: false
 end
 
 RSpec.configure do |config|

@@ -284,6 +284,10 @@ describe Guise do
         )
       ]
     end
+
+    it "skips validations with `validate: false`" do
+      expect(Permission._validators[:privilege]).to be_empty
+    end
   end
 
   describe '.scoped_guise_of' do

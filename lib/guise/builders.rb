@@ -80,8 +80,16 @@ module Guise
     def initialize(association_class, options, association_options)
       @association_class = association_class
       @options = options
-      @association_options = association_options.reverse_merge!(@options.default_association_options)
-      @define_validations = !@association_options.delete(:validate)
+
+      # if `:validate` is specified, coerce the value into a boolean, otherwise, default to
+      # `true`
+      @define_validations = if association_options.key?(:validate)
+                              !!association_options.delete(:validate)
+                            else
+                              true
+                            end
+
+      @association_options = @options.default_association_options.merge(association_options)
     end
 
     def build!
